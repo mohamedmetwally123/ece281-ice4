@@ -108,6 +108,7 @@ begin
 	begin
 		-- sequential timing		
 		w_reset <= '1';
+		--You keep pressing for that time so that you hit a rising edge
 		wait for k_clk_period*1;
 		  assert w_stoplight = "010" report "bad reset" severity failure;
 		

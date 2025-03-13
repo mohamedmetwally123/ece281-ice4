@@ -80,20 +80,59 @@ component clock_divider is
 	);
 end component clock_divider;
 
-	signal w_clk : std_logic;		--this wire provides the connection between o_clk and stoplight clk
+component stoplight_fsm is
+    Port ( i_C     : in  STD_LOGIC;
+           i_reset : in  STD_LOGIC;
+           i_clk   : in  STD_LOGIC;
+           o_R     : out  STD_LOGIC;
+           o_Y     : out  STD_LOGIC;
+           o_G     : out  STD_LOGIC
+           );
 
+end component stoplight_fsm;
+
+    --Coming out of the clock
+	signal w_clk : std_logic;		--this wire provides the connection between o_clk and stoplight clk
+   
+    --Sensor for the cars
+    signal w_C: std_logic_vector(0 downto 0);
+    signal w_btnC: std_logic;
+    signal w_btnl : std_logic;
+    --Coming from the clock and into the clock divider
+    signal w_inClk: std_logic;
+    signal w_G: std_logic;
+    signal w_R: std_logic;
+    signal w_Y: std_logic;
 begin
 	-- PORT MAPS ----------------------------------------
 	--Port map stoplight here based on the design provided
-
+    stoplight_inst: stoplight_fsm port map (
+        i_c => w_c(0),
+        i_reset => w_btnC,
+        i_clk => w_clk,
+        o_R => w_R,
+        o_G => w_G,
+        o_Y => w_Y
+    );
+        
 
 --Complete the clock_divider portmap below based on the design provided	
 	clkdiv_inst : clock_divider 		--instantiation of clock_divider to take 
         generic map ( k_DIV => 50000000 ) -- 1 Hz clock from 100 MHz
         port map (						  
-            i_clk   => 
-            i_reset => 
-            o_clk   => 
+            i_clk   => w_inClk,
+            i_reset => w_btnl,
+            o_clk   => w_clk
         );    
 	
+	--Connecting to the physical hardware
+	--Inputs
+	w_C <= sw;
+    w_btnC <= btnC;
+	w_inClk <= clk;
+	w_btnL <= btnL;
+	--Connecting the lights
+	JA(0) <= w_R;
+	JA(1) <= w_Y;
+	JA(2) <= w_G;
 end top_basys3_arch;
